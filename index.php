@@ -14,6 +14,7 @@
         <hr>
         <a href="views/autocompletado.php" class ="btn btn-primary">Buscador asíncrono con BD</a>
         <a href="views/js/qr.php" class ="btn btn-primary">Generador de QR</a>
+        <a href="reports/reporte.php" class ="btn btn-primary">Generador de PDF</a>
     </div>
 </body>
 

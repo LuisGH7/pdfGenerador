@@ -12,6 +12,10 @@ try{
   $usuario = "Luis Anderson Boada Ramos";
   $destinatario = "Joel Rojas Marcos";
   $cargo = "Jefe de informatica";
+
+  //Arrehlo
+  $programas =["Visual Studio Code", "Android Studio", "MS SQL Server", "Erwin"];
+  
   ob_start();
 
   //IMPORTANTE debe inicializar data
