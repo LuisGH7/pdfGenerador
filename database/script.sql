@@ -86,18 +86,97 @@ INSERT INTO equipos (nombre, precio, garantia, especificaciones) VALUES
     ("LG Power",1500,12,'{"colores":["rojo","verde","azul"]}');
 
 SELECT nombre,
-    JSON_EXTRACT(especificaciones,'$.colores') AS 'colores'
- FROM equipos 
+	JSON_EXTRACT(especificaciones,'$.colores') AS 'colores'
+FROM equipos 
+WHERE idequipo = 2;
+
+-- RECUPERAMOS EL PRIMER VALOR
+SELECT nombre,
+	JSON_EXTRACT(especificaciones,'$.colores[0]') AS 'colores'
+FROM equipos 
+WHERE idequipo = 2;
+
+-- CAMBIAR EL ULTIMO COLOR => rojo => blanco
+
+UPDATE equipos SET
+	especificaciones = JSON_REPLACE(especificaciones,'$.colores[0]', "blanco")
  WHERE idequipo = 2;
+ 
+SELECT * FROM equipos
+ 
+ -- obtener datos
+SELECT nombre, 
+			JSON_EXTRACT(especificaciones, '$.capacidad')'capacidad'
+	FROM equipos WHERE idequipo = 2;
+	
+SELECT nombre, 
+			JSON_EXTRACT(especificaciones, '$.colores')"colores"
+	FROM equipos WHERE idequipo = 1;
+	
+SELECT nombre, 
+			JSON_EXTRACT(especificaciones, '$.colores[0]')"colores"
+	FROM equipos WHERE idequipo = 2;
+	
+-- actualizamos datos en json
+UPDATE equipos SET
+	especificaciones = JSON_REPLACE(especificaciones, '$.capacidad', 2048)
+ WHERE idequipo = 1;
+ 
+UPDATE equipos SET
+	especificaciones = JSON_REPLACE(especificaciones, '$.colores[0]','negro')
+	WHERE idequipo = 2;
+	
+-- eliminar nodo de sjon
+UPDATE equipos SET
+	especificaciones = JSON_REMOVE(especificaciones, '$.ram')
+	WHERE idequipo = 1;
+	
+-- insertar un json complejo
+INSERT INTO equipos (nombre, precio, garantia, especificaciones) VALUES
+("Motorola Max", 2000, 12, '{"plegabel":"true", "5G": true, "sensores":["retina", "ritmo cardiaco"]}')
 
- -- RECUPERAMOS EL PRIMER VALOR
- SELECT nombre,
-    JSON_EXTRACT(especificaciones,'$.colores[0]') AS 'colores'
- FROM equipos 
- WHERE idequipo = 2;
+-- verficamos el dato en el json
+SELECT nombre, 
+			JSON_EXTRACT(especificaciones, '$.sensores[1]')"sensor"
+	FROM equipos WHERE idequipo = 3;
+	
+-- como mostrar los datos no json como arreglo
+SELECT JSON_ARRAY(nombre,precio,garantia)"datos" FROM equipos
 
- -- CAMBIAR EL ULTIMO COLOR => rojo => blanco
+-- como agregar datos al arreglo
+SET @json = '[1,2,3,4]';
+SELECT JSON_ARRAY_INSERT(@json,'$[0]',7);
 
- UPDATE equipos SET
- especificaciones = JSON_REPLACE(especificaciones,'$.colores[0]', "blanco")
-    WHERE idequipo = 2;
+-- agregando un nuevo color
+UPDATE equipos SET
+	especificaciones = JSON_ARRAY_INSERT(especificaciones, '$.colores[3]','dorado')
+	WHERE idequipo = 2;
+	
+-- agregar un nuevo sensor al 3 registro
+UPDATE equipos SET
+	especificaciones = JSON_ARRAY_INSERT(especificaciones, '$.sensores[2]','biometrico')
+	WHERE idequipo = 3;
+	
+-- cúantos sensores tiene registrado el motorolamax
+SELECT  nombre, JSON_LENGTH(especificaciones,'$.sensores')'Total sensores'
+	FROM equipos WHERE idequipo = 3;
+
+-- ¿Cómo sabemos si existe un nodo en el JSON?
+SELECT 	nombre,
+		CASE
+			WHEN (JSON_EXISTS(especificaciones, '$.sensores')) = 0 THEN  "No tiene"
+			WHEN (JSON_EXISTS(especificaciones, '$.sensores')) = 1 THEN  "Si tiene"
+		END  'sensor disponible'
+	FROM equipos;
+-- agregar un nuevo nodo json
+SET @json = '{"D": "Photoshop", "I": "AutoCat"}';
+-- agregar la clave p : visual studio code
+SELECT JSON_INSERT(@json,'$.P','Visual Studio Code');
+
+-- agregar el nodo "ragua": true al ultimo registro
+UPDATE equipos SET
+	especificaciones = JSON_INSERT(especificaciones,'$.ragua','true')
+	WHERE idequipo = 3
+
+
+SELECT * FROM equipos
